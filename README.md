@@ -1,2 +1,2 @@
 # VRFPSStabilizerFallout
-Port of Skyrim VRFPSStabilizerFallout
+Port of Skyrim VRFPSStabilizer
