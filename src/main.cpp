@@ -1,4 +1,4 @@
-
+#include "VRFpsStabilizer.h"
 
 namespace
 {
@@ -8,11 +8,27 @@ namespace
 	{
 		switch (a_message->type) {
 		case F4SE::MessagingInterface::kPostPostLoad:
+			{
+				VRFpsStabilizer::RunPostLoadGameCommands();
+				VRFpsStabilizer::ResetIniSettings();
+			}
 			break;
 		case F4SE::MessagingInterface::kGameLoaded:
+			{
+				VRFpsStabilizer::loadLocationConfig();
+				VRFpsStabilizer::loadConfig();
+				VRFpsStabilizer::ResetIniSettings();
+
+				VRFpsStabilizer::RunDataLoadedCommands();
+
+				VRFpsStabilizer::StartFunctions();
+
+			//	VRFpsStabilizer::LinkFunctions();   ///  No ENB
+			}
 			break;
 		case F4SE::MessagingInterface::kNewGame:
 			{
+				VRFpsStabilizer::RunNewGameCommands();
 			}
 			break;
 		}

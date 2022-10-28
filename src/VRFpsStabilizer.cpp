@@ -191,70 +191,73 @@ namespace VRFpsStabilizer
 
 	// TODO : get console working
 
-	//const size_t cmdBufferSize = 255;
-	//char cmdBuffer[cmdBufferSize];
+	const size_t cmdBufferSize = 255;
+	char cmdBuffer[cmdBufferSize];
 
-	//void RunDataLoadedCommandsFunc()
-	//{
-	//	Sleep(2000);
+	void RunDataLoadedCommandsFunc()
+	{
+		Sleep(2000);
 
-	//	for (int i = 0; i < dataLoadedCommands.size(); i++) {
-	//		sprintf_s(cmdBuffer, cmdBufferSize, "%s", dataLoadedCommands[i].c_str());
+		for (int i = 0; i < dataLoadedCommands.size(); i++) {
+			sprintf_s(cmdBuffer, cmdBufferSize, "%s", dataLoadedCommands[i].c_str());
 	//		CSkyrimConsole::RunCommand(cmdBuffer);
-	//		LOG_ERR("Executed command: %s", dataLoadedCommands[i].c_str());
-	//	}
-	//}
+			logger::info("Executed command: %s", dataLoadedCommands[i].c_str());
+		}
+	}
 
-	//void RunDataLoadedCommands()
-	//{
-	//	std::thread t0(RunDataLoadedCommandsFunc);
-	//	t0.detach();
-	//}
-	//void RunAfterLoadGameCommands()
-	//{
-	//	TESObjectCELL* cell = nullptr;
-	//	while (true) {
-	//		if (!(*g_thePlayer) || !(*g_thePlayer)->loadedState) {
-	//			Sleep(5000);
-	//			continue;
-	//		}
+	void RunDataLoadedCommands()
+	{
+		std::thread t0(RunDataLoadedCommandsFunc);
+		t0.detach();
+	}
 
-	//		cell = (*g_thePlayer)->parentCell;
+	void RunAfterLoadGameCommands()
+	{
+		RE::TESObjectCELL* cell = nullptr;
 
-	//		if (!cell) {
-	//			Sleep(3000);
-	//			continue;
-	//		}
+		const auto g_thePlayer = RE::PlayerCharacter::GetSingleton();
+		while (true) {
+			if (!g_thePlayer || !g_thePlayer->loadedData) {
+				Sleep(5000);
+				continue;
+			}
 
-	//		for (int i = 0; i < afterLoadGameCommands.size(); i++) {
-	//			sprintf_s(cmdBuffer, cmdBufferSize, "%s", afterLoadGameCommands[i].c_str());
+			cell = g_thePlayer->parentCell;
+
+			if (!cell) {
+				Sleep(3000);
+				continue;
+			}
+
+			for (int i = 0; i < afterLoadGameCommands.size(); i++) {
+				sprintf_s(cmdBuffer, cmdBufferSize, "%s", afterLoadGameCommands[i].c_str());
 	//			CSkyrimConsole::RunCommand(cmdBuffer);
-	//			LOG_ERR("Executed command after load game: %s", afterLoadGameCommands[i].c_str());
-	//		}
-	//		break;
-	//	}
-	//}
+				logger::info("Executed command after load game: %s", afterLoadGameCommands[i].c_str());
+			}
+			break;
+		}
+	}
 
-	//void RunPostLoadGameCommands()
-	//{
-	//	for (int i = 0; i < postLoadGameCommands.size(); i++) {
-	//		sprintf_s(cmdBuffer, cmdBufferSize, "%s", postLoadGameCommands[i].c_str());
+	void RunPostLoadGameCommands()
+	{
+		for (int i = 0; i < postLoadGameCommands.size(); i++) {
+			sprintf_s(cmdBuffer, cmdBufferSize, "%s", postLoadGameCommands[i].c_str());
 	//		CSkyrimConsole::RunCommand(cmdBuffer);
-	//		LOG_ERR("Executed command post load game: %s", postLoadGameCommands[i].c_str());
-	//	}
+			logger::info("Executed command post load game: %s", postLoadGameCommands[i].c_str());
+		}
 
-	//	std::thread t3(RunAfterLoadGameCommands);
-	//	t3.detach();
-	//}
+		std::thread t3(RunAfterLoadGameCommands);
+		t3.detach();
+	}
 
-	//void RunNewGameCommands()
-	//{
-	//	for (int i = 0; i < newGameCommands.size(); i++) {
-	//		sprintf_s(cmdBuffer, cmdBufferSize, "%s", newGameCommands[i].c_str());
+	void RunNewGameCommands()
+	{
+		for (int i = 0; i < newGameCommands.size(); i++) {
+			sprintf_s(cmdBuffer, cmdBufferSize, "%s", newGameCommands[i].c_str());
 	//		CSkyrimConsole::RunCommand(cmdBuffer);
-	//		LOG_ERR("Executed command new game: %s", newGameCommands[i].c_str());
-	//	}
-	//}
+			logger::info("Executed command new game: %s", newGameCommands[i].c_str());
+		}
+	}
 
 	void ParseConditionalCommands()
 	{
@@ -714,37 +717,37 @@ namespace VRFpsStabilizer
 	//	}
 	//}
 
-	//void Resetter()
-	//{
-	//	if (autoConfigEnabled != 0) {
-	//		Sleep(5000);
-	//		LOG_ERR("Setting ini settings to Level 0 values...");
-	//		if (LevelMap.find(0) != LevelMap.end()) {
-	//			for (int i = 0; i < LevelMap[0].size(); i++) {
-	//				if (LevelMap[0][i].console) {
-	//					sprintf_s(cmdBuffer, cmdBufferSize, "%s", LevelMap[0][i].command.c_str());
-	//					CSkyrimConsole::RunCommand(cmdBuffer);
-	//				} else if (LevelMap[0][i].enb == false && LevelMap[0][i].toggle == false) {
-	//					Setting* csetting = GetINISetting(LevelMap[0][i].variableName.c_str());
-	//					if (csetting) {
-	//						csetting->SetDouble(LevelMap[0][i].variableValue);
-	//					}
-	//				}
-	//			}
-	//			currentLevel = 0;
-	//		} else {
-	//			LOG_ERR("Cannot find Level 0 values...");
-	//		}
+	void Resetter()
+	{
+		if (autoConfigEnabled != 0) {
+			Sleep(5000);
+			logger::critical("Setting ini settings to Level 0 values...");
+			if (LevelMap.find(0) != LevelMap.end()) {
+				for (int i = 0; i < LevelMap[0].size(); i++) {
+					if (LevelMap[0][i].console) {
+						sprintf_s(cmdBuffer, cmdBufferSize, "%s", LevelMap[0][i].command.c_str());
+				//		CSkyrimConsole::RunCommand(cmdBuffer);
+					} else if (LevelMap[0][i].enb == false && LevelMap[0][i].toggle == false) {
+						RE::Setting* csetting = GetINISetting(LevelMap[0][i].variableName.c_str());
+						if (csetting) {
+							csetting->SetFloat(LevelMap[0][i].variableValue);
+						}
+					}
+				}
+				currentLevel = 0;
+			} else {
+				logger::info("Cannot find Level 0 values...");
+			}
 
 	//		ToggleSwitch(0);
-	//	}
-	//}
+		}
+	}
 	
-	//void ResetIniSettings()
-	//{
-	//	std::thread t0(Resetter);
-	//	t0.detach();
-	//}
+	void ResetIniSettings()
+	{
+		std::thread t0(Resetter);
+		t0.detach();
+	}
 
 	bool IsInTimePeriod(float startTime, float endTime)
 	{
