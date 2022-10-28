@@ -1,0 +1,3 @@
+[Fixes]
+ActorIsHostileToActor = true         # Fixes a crash when invoking Actor.IsHostileToActor with a none form
+

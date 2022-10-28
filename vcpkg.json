@@ -1,0 +1,29 @@
+{
+  "name": "example",
+  "version": "1",
+  "dependencies": [
+    "args",
+    "boost-algorithm",
+    "boost-container",
+    "boost-nowide",
+    "boost-stacktrace",
+    "boost-stl-interfaces",
+    "catch2",
+    "fmt",
+    "magic-enum",
+    "nowide",
+    "rsm-binary-io",
+    "rsm-mmio",
+    "srell",
+    "spdlog",
+    "tomlplusplus",
+    "xbyak"
+  ],
+  "builtin-baseline": "e2667a41fc2fc578474e9521d7eb90b769569c83",
+  "overrides": [
+    {
+      "name": "fmt",
+      "version": "8.0.1"
+    }
+  ]
+}
