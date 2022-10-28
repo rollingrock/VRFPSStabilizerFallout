@@ -1,3 +1,24 @@
+
+
+namespace
+{
+
+
+	void F4SEAPI MessageHandler(F4SE::MessagingInterface::Message* a_message)
+	{
+		switch (a_message->type) {
+		case F4SE::MessagingInterface::kPostPostLoad:
+			break;
+		case F4SE::MessagingInterface::kGameLoaded:
+			break;
+		case F4SE::MessagingInterface::kNewGame:
+			{
+			}
+			break;
+		}
+	}
+}
+
 extern "C" DLLEXPORT bool F4SEAPI F4SEPlugin_Query(const F4SE::QueryInterface* a_f4se, F4SE::PluginInfo* a_info)
 {
 	a_info->infoVersion = F4SE::PluginInfo::kVersion;
@@ -21,6 +42,11 @@ extern "C" DLLEXPORT bool F4SEAPI F4SEPlugin_Query(const F4SE::QueryInterface* a
 extern "C" DLLEXPORT bool F4SEAPI F4SEPlugin_Load(const F4SE::LoadInterface* a_f4se)
 {
 	F4SE::Init(a_f4se);
+
+	const auto messaging = F4SE::GetMessagingInterface();
+	if (!messaging || !messaging->RegisterListener(MessageHandler)) {
+		return false;
+	}
 
 	return true;
 }

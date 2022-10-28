@@ -109,4 +109,3 @@ namespace util
 using namespace std::literals;
 
 #include "Plugin.h"
-#include "Settings.h"

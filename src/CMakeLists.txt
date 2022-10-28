@@ -34,11 +34,17 @@ message(
 	"Building ${PROJECT_NAME} ${PROJECT_VERSION} for ${FalloutVersion} at ${FalloutPath} with ${CommonLibName} at ${CommonLibPath}."
 )
 
+list(APPEND CMAKE_MODULE_PATH "${ROOT_DIR}/cmake")
 
 set(SOURCE_DIR "${ROOT_DIR}/src")
 set(SOURCE_FILES
-	"${SOURCE_DIR}/Settings.h"
+	"${SOURCE_DIR}/dirent.h"
 	"${SOURCE_DIR}/main.cpp"
+	"${SOURCE_DIR}/Utility.h"
+	"${SOURCE_DIR}/Console.h"
+	"${SOURCE_DIR}/Console.cpp"
+	"${SOURCE_DIR}/VRFpsStabilizer.h"
+	"${SOURCE_DIR}/VRFpsStabilizer.cpp"
 	"${SOURCE_DIR}/PCH.h"
 )
 
@@ -130,6 +136,7 @@ find_package(spdlog REQUIRED CONFIG)
 find_package(tomlplusplus REQUIRED CONFIG)
 find_package(xbyak REQUIRED CONFIG)
 find_package(magic_enum CONFIG REQUIRED)
+find_package(OpenVR REQUIRED)
 # https://github.com/microsoft/DirectXShaderCompiler/blob/main/cmake/modules/FindDiaSDK.cmake
 # Find the DIA SDK path.
 # It will typically look something like this:
@@ -220,6 +227,7 @@ target_link_libraries(
 		spdlog::spdlog
 		tomlplusplus::tomlplusplus
 		xbyak::xbyak
+		OpenVR::OpenVR
 )
 
 target_compile_definitions(
@@ -244,7 +252,7 @@ target_precompile_headers(
 handle_data_files(
 	FILES
 		"$<TARGET_FILE:${PROJECT_NAME}>"
-		"${ROOT_DIR}/data/Data/F4SE/Plugins/VRFPSStabilizerFallout.toml"
+#		"${ROOT_DIR}/data/Data/F4SE/Plugins/VRFPSStabilizerFallout.toml"
 	DESTINATION "F4SE/Plugins"
 )
 
