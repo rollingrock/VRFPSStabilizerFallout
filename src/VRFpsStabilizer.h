@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Utility.h"
 
 #include "RE/Bethesda/TESForms.h"
 #include "RE/Bethesda/Actor.h"

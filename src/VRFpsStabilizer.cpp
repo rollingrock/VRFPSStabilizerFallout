@@ -1,7 +1,6 @@
 #include "VRFpsStabilizer.h"
-
-#include "RE/NetImmerse/NiPoint3.h"
-#include "RE/Bethesda/TESDataHandler.h"
+#include "Utility.h"
+#include "Menu.h"
 
 #pragma warning(disable : 4505 4189 4100)
 
@@ -201,6 +200,7 @@ namespace VRFpsStabilizer
 		for (int i = 0; i < dataLoadedCommands.size(); i++) {
 			sprintf_s(cmdBuffer, cmdBufferSize, "%s", dataLoadedCommands[i].c_str());
 	//		CSkyrimConsole::RunCommand(cmdBuffer);
+			RE::Console::ExecuteCommand(cmdBuffer);
 			logger::info("Executed command: %s", dataLoadedCommands[i].c_str());
 		}
 	}
@@ -232,6 +232,7 @@ namespace VRFpsStabilizer
 			for (int i = 0; i < afterLoadGameCommands.size(); i++) {
 				sprintf_s(cmdBuffer, cmdBufferSize, "%s", afterLoadGameCommands[i].c_str());
 	//			CSkyrimConsole::RunCommand(cmdBuffer);
+				RE::Console::ExecuteCommand(cmdBuffer);
 				logger::info("Executed command after load game: %s", afterLoadGameCommands[i].c_str());
 			}
 			break;
@@ -243,6 +244,7 @@ namespace VRFpsStabilizer
 		for (int i = 0; i < postLoadGameCommands.size(); i++) {
 			sprintf_s(cmdBuffer, cmdBufferSize, "%s", postLoadGameCommands[i].c_str());
 	//		CSkyrimConsole::RunCommand(cmdBuffer);
+			RE::Console::ExecuteCommand(cmdBuffer);
 			logger::info("Executed command post load game: %s", postLoadGameCommands[i].c_str());
 		}
 
@@ -255,6 +257,7 @@ namespace VRFpsStabilizer
 		for (int i = 0; i < newGameCommands.size(); i++) {
 			sprintf_s(cmdBuffer, cmdBufferSize, "%s", newGameCommands[i].c_str());
 	//		CSkyrimConsole::RunCommand(cmdBuffer);
+			RE::Console::ExecuteCommand(cmdBuffer);
 			logger::info("Executed command new game: %s", newGameCommands[i].c_str());
 		}
 	}
@@ -698,24 +701,26 @@ namespace VRFpsStabilizer
 			logger::critical("No VR compositor found.");
 	}
 
-	//void ToggleSwitch(int level)
-	//{
-	//	for (auto& toggleLevel : ToggleLevelMap) {
-	//		if (level < toggleLevel.second)  //This toggle must be off
-	//		{
-	//			if (ToggleMap[toggleLevel.first] == true) {
-	//				sprintf_s(cmdBuffer, cmdBufferSize, "%s", toggleLevel.first.c_str());
-	//				CSkyrimConsole::RunCommand(cmdBuffer);
-	//			}
-	//		} else  //This toggle must be on
-	//		{
-	//			if (ToggleMap[toggleLevel.first] == false) {
-	//				sprintf_s(cmdBuffer, cmdBufferSize, "%s", toggleLevel.first.c_str());
-	//				CSkyrimConsole::RunCommand(cmdBuffer);
-	//			}
-	//		}
-	//	}
-	//}
+	void ToggleSwitch(int level)
+	{
+		for (auto& toggleLevel : ToggleLevelMap) {
+			if (level < toggleLevel.second)  //This toggle must be off
+			{
+				if (ToggleMap[toggleLevel.first] == true) {
+					sprintf_s(cmdBuffer, cmdBufferSize, "%s", toggleLevel.first.c_str());
+					//CSkyrimConsole::RunCommand(cmdBuffer);
+					RE::Console::ExecuteCommand(cmdBuffer);
+				}
+			} else  //This toggle must be on
+			{
+				if (ToggleMap[toggleLevel.first] == false) {
+					sprintf_s(cmdBuffer, cmdBufferSize, "%s", toggleLevel.first.c_str());
+				//	CSkyrimConsole::RunCommand(cmdBuffer);
+					RE::Console::ExecuteCommand(cmdBuffer);
+				}
+			}
+		}
+	}
 
 	void Resetter()
 	{
@@ -727,6 +732,7 @@ namespace VRFpsStabilizer
 					if (LevelMap[0][i].console) {
 						sprintf_s(cmdBuffer, cmdBufferSize, "%s", LevelMap[0][i].command.c_str());
 				//		CSkyrimConsole::RunCommand(cmdBuffer);
+						RE::Console::ExecuteCommand(cmdBuffer);
 					} else if (LevelMap[0][i].enb == false && LevelMap[0][i].toggle == false) {
 						RE::Setting* csetting = GetINISetting(LevelMap[0][i].variableName.c_str());
 						if (csetting) {
@@ -739,7 +745,7 @@ namespace VRFpsStabilizer
 				logger::info("Cannot find Level 0 values...");
 			}
 
-	//		ToggleSwitch(0);
+			ToggleSwitch(0);
 		}
 	}
 	
@@ -782,7 +788,8 @@ namespace VRFpsStabilizer
 			} else if (cc.command.rfind("CONSOLE>", 0) == 0)  //Starts with
 			{
 				std::string consoleStr = eraseAllSubStr(cc.command, "CONSOLE>");
-			//	CSkyrimConsole::RunCommand(consoleStr.c_str());
+			//	SkyrimConsole::RunCommand(consoleStr.c_str());
+				RE::Console::ExecuteCommand(consoleStr.c_str());
 			} else if (cc.command.rfind("INI>", 0) == 0)  //Starts with
 			{
 				std::string iniStr = eraseAllSubStr(cc.command, "INI>");
@@ -792,6 +799,7 @@ namespace VRFpsStabilizer
 				RunIniSetting(variableName, variableValue);
 			} else {
 		//		CSkyrimConsole::RunCommand(cc.command.c_str());
+				RE::Console::ExecuteCommand(cc.command.c_str());
 			}
 		}
 	}
@@ -876,10 +884,12 @@ namespace VRFpsStabilizer
 					if ((lodON) && !newLODState) {
 						lodON = false;
 				//		CSkyrimConsole::RunCommand("tll");
+						RE::Console::ExecuteCommand("tll");
 						logger::info("Turning LOD off.");
 					} else if ((!lodON) && newLODState) {
 						lodON = true;
 						/*CSkyrimConsole::RunCommand("tll");*/
+						RE::Console::ExecuteCommand("tll");
 						logger::info("Turning LOD on.");
 					}
 				}
@@ -904,10 +914,12 @@ namespace VRFpsStabilizer
 
 					if (isGrassEnabled && !newGrassState) {
 				//		CSkyrimConsole::RunCommand("tg");
+						RE::Console::ExecuteCommand("tg");
 
 						logger::info("Turning grass off.");
 					} else if ((!isGrassEnabled) && newGrassState) {
 				//		CSkyrimConsole::RunCommand("tg");
+						RE::Console::ExecuteCommand("tg");
 
 						logger::info("Turning grass on.");
 					}
@@ -1124,8 +1136,9 @@ namespace VRFpsStabilizer
 			if (LevelMap.find(0) != LevelMap.end()) {
 				for (int i = 0; i < LevelMap[0].size(); i++) {
 					if (LevelMap[0][i].console) {
-				//		sprintf_s(cmdBuffer, cmdBufferSize, "%s", LevelMap[0][i].command.c_str());
+						sprintf_s(cmdBuffer, cmdBufferSize, "%s", LevelMap[0][i].command.c_str());
 					//	CSkyrimConsole::RunCommand(cmdBuffer);
+						RE::Console::ExecuteCommand(cmdBuffer);
 					} else if (LevelMap[0][i].enb == false && LevelMap[0][i].toggle == false) {
 						RE::Setting* csetting = GetINISetting(LevelMap[0][i].variableName.c_str());
 						if (csetting) {
@@ -1321,34 +1334,34 @@ namespace VRFpsStabilizer
 	void RunIniSetting(std::string variableName, double variableValue)
 	{
 		if (strcmp(variableName.c_str(), "fShadowDistance:Display") == 0) {
-//			SetShadowDistance(variableValue);
+			SetShadowDistance(variableValue);
 			logger::info("New setting (%s): %g", variableName.c_str(), variableValue);
 		} else if (strcmp(variableName.c_str(), "fInteriorShadowDistance:Display") == 0) {
-//			SetInteriorShadowDistance(variableValue);
+			SetInteriorShadowDistance(variableValue);
 			logger::info("New setting (%s): %g", variableName.c_str(), variableValue);
 		} else if (strcmp(variableName.c_str(), "iMinGrassSize:Grass") == 0) {
-//			SetiMinGrassSize(variableValue);
+			SetiMinGrassSize(variableValue);
 			logger::info("New setting (%s): %g", variableName.c_str(), variableValue);
 		} else if (strcmp(variableName.c_str(), "bEnableTreeAnimations:Trees") == 0) {
-//			SetEnableTreeAnimations(variableValue);
+			SetEnableTreeAnimations(variableValue);
 			logger::info("New setting (%s): %g", variableName.c_str(), variableValue);
 		} else if (strcmp(variableName.c_str(), "bTreesReceiveShadows:Display") == 0) {
-//			SetTreesReceiveShadows(variableValue);
+			SetTreesReceiveShadows(variableValue);
 			logger::info("New setting (%s): %g", variableName.c_str(), variableValue);
 		} else if (strcmp(variableName.c_str(), "uiMaxSkinnedTreesToRender:Trees") == 0) {
-//			SetMaxSkinnedTrees(variableValue);
+			SetMaxSkinnedTrees(variableValue);
 			logger::info("New setting (%s): %g", variableName.c_str(), variableValue);
 		} else if (strcmp(variableName.c_str(), "iShadowMapResolution:Display") == 0) {
-//			SetShadowMapResolution(variableValue);
+			SetShadowMapResolution(variableValue);
 			logger::info("New setting (%s): %g", variableName.c_str(), variableValue);
 		} else if (strcmp(variableName.c_str(), "bEnableAutoDynamicResolution:Display") == 0) {
-//			SetEnableAutoDynamicResolution(variableValue);
+			SetEnableAutoDynamicResolution(variableValue);
 			logger::info("New setting (%s): %g", variableName.c_str(), variableValue);
 		} else if (strcmp(variableName.c_str(), "fLowestDynamicWidthRatio:Display") == 0) {
-//			SetLowestDynamicWidthRatio(variableValue);
+			SetLowestDynamicWidthRatio(variableValue);
 			logger::info("New setting (%s): %g", variableName.c_str(), variableValue);
 		} else if (strcmp(variableName.c_str(), "fLowestDynamicHeightRatio:Display") == 0) {
-//			SetLowestDynamicHeightRatio(variableValue);
+			SetLowestDynamicHeightRatio(variableValue);
 			logger::info("New setting (%s): %g", variableName.c_str(), variableValue);
 		} else {
 			RE::Setting* csetting = GetINISetting(variableName.c_str());
@@ -1385,14 +1398,15 @@ namespace VRFpsStabilizer
 					continue;
 
 				if (SettingsList->at(i).console) {
-					//sprintf_s(cmdBuffer, cmdBufferSize, "%s", SettingsList->at(i).command.c_str());
+					sprintf_s(cmdBuffer, cmdBufferSize, "%s", SettingsList->at(i).command.c_str());
 					//CSkyrimConsole::RunCommand(cmdBuffer);
+					RE::Console::ExecuteCommand(cmdBuffer);
 				} else if (SettingsList->at(i).enb == false && SettingsList->at(i).toggle == false) {
 					RunIniSetting(SettingsList->at(i).variableName, SettingsList->at(i).variableValue);
 				}
 			}
 
-		//	ToggleSwitch(level);
+			ToggleSwitch(level);
 
 			currentLevelFrameTime = currentFrameTime;
 			logger::info("Switching to level %d - Angle:%g", level, lastHeadingAngle);
@@ -1424,7 +1438,7 @@ namespace VRFpsStabilizer
 		auto g_thePlayer = RE::PlayerCharacter::GetSingleton();
 		while (true) {
 		//	if (!isGameStopped()) {
-			if (true) {
+			if (!isInMenu()) {
 				if (ivrCompositor != nullptr) {
 					vr::Compositor_FrameTiming pFrameTiming;
 					vr::Compositor_FrameTiming* pFrameTimings = pFrameTimingArray;
