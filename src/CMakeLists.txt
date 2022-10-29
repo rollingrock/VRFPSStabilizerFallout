@@ -72,7 +72,7 @@ add_library(
 	"${VERSION_HEADER}"
 	"${CMAKE_CURRENT_BINARY_DIR}/version.rc"
 	"${ROOT_DIR}/.clang-format"
-	"${ROOT_DIR}/.editorconfig"
+	#"${ROOT_DIR}/.editorconfig"
 )
 
 target_compile_features(
@@ -123,109 +123,14 @@ else ()
 	)
 endif()
 
-find_package(Boost
-	MODULE
-	REQUIRED
-	COMPONENTS
-		nowide
-		stacktrace_windbg
-)
-find_package(binary_io REQUIRED CONFIG)
-find_package(fmt REQUIRED CONFIG)
-find_package(spdlog REQUIRED CONFIG)
-find_package(tomlplusplus REQUIRED CONFIG)
 find_package(xbyak REQUIRED CONFIG)
-find_package(magic_enum CONFIG REQUIRED)
 find_package(OpenVR REQUIRED)
-# https://github.com/microsoft/DirectXShaderCompiler/blob/main/cmake/modules/FindDiaSDK.cmake
-# Find the DIA SDK path.
-# It will typically look something like this:
-# C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\DIA SDK\include
-
-# CMAKE_GENERATOR_INSTANCE has the location of Visual Studio used
-# i.e. C:/Program Files (x86)/Microsoft Visual Studio/2019/Community
-set(VS_PATH ${CMAKE_GENERATOR_INSTANCE})
-get_filename_component(VS_DIA_INC_PATH "${VS_PATH}/DIA SDK/include" ABSOLUTE CACHE)
-
-# Starting in VS 15.2, vswhere is included.
-# Unclear what the right component to search for is, might be Microsoft.VisualStudio.Component.VC.DiagnosticTools
-# (although the friendly name of that is C++ profiling tools).  The toolset is the most likely target.
-set(PROGRAMFILES_X86 "ProgramFiles(x86)")
-execute_process(
-  COMMAND "$ENV{${PROGRAMFILES_X86}}/Microsoft Visual Studio/Installer/vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
-  OUTPUT_VARIABLE VSWHERE_LATEST
-  ERROR_QUIET
-  OUTPUT_STRIP_TRAILING_WHITESPACE
-  )
-
-find_path(DIASDK_INCLUDE_DIR    # Set variable DIASDK_INCLUDE_DIR
-          dia2.h                # Find a path with dia2.h
-          HINTS "${VS_DIA_INC_PATH}"
-          HINTS "${VSWHERE_LATEST}/DIA SDK/include"
-          DOC "path to DIA SDK header files"
-          )
-
-
-# VS 2017
-if (CMAKE_GENERATOR MATCHES "Visual Studio 15 2017.*")
-  if (CMAKE_GENERATOR MATCHES "Visual Studio.*Win64")
-    find_library(DIASDK_GUIDS_LIBRARY NAMES diaguids.lib HINTS ${DIASDK_INCLUDE_DIR}/../lib/amd64 )
-  elseif (CMAKE_GENERATOR_PLATFORM STREQUAL "ARM")
-    find_library(DIASDK_GUIDS_LIBRARY NAMES diaguids.lib HINTS ${DIASDK_INCLUDE_DIR}/../lib/arm )
-  else (CMAKE_GENERATOR MATCHES "Visual Studio.*Win64")
-    find_library(DIASDK_GUIDS_LIBRARY NAMES diaguids.lib HINTS ${DIASDK_INCLUDE_DIR}/../lib )
-  endif (CMAKE_GENERATOR MATCHES "Visual Studio.*Win64")
-else (CMAKE_GENERATOR MATCHES "Visual Studio 15 2017.*")
-  if ((CMAKE_GENERATOR_PLATFORM STREQUAL "x64") OR ("${DXC_BUILD_ARCH}" STREQUAL "x64"))
-    find_library(DIASDK_GUIDS_LIBRARY NAMES diaguids.lib HINTS ${DIASDK_INCLUDE_DIR}/../lib/amd64 )
-  elseif ((CMAKE_GENERATOR_PLATFORM STREQUAL "ARM") OR ("${DXC_BUILD_ARCH}" STREQUAL "ARM"))
-    find_library(DIASDK_GUIDS_LIBRARY NAMES diaguids.lib HINTS ${DIASDK_INCLUDE_DIR}/../lib/arm )
-  elseif ((CMAKE_GENERATOR_PLATFORM MATCHES "ARM64.*") OR ("${DXC_BUILD_ARCH}" MATCHES "ARM64.*"))
-    find_library(DIASDK_GUIDS_LIBRARY NAMES diaguids.lib HINTS ${DIASDK_INCLUDE_DIR}/../lib/arm64 )
-  else ((CMAKE_GENERATOR_PLATFORM STREQUAL "x64") OR ("${DXC_BUILD_ARCH}" STREQUAL "x64"))
-    find_library(DIASDK_GUIDS_LIBRARY NAMES diaguids.lib HINTS ${DIASDK_INCLUDE_DIR}/../lib )
-  endif((CMAKE_GENERATOR_PLATFORM STREQUAL "x64") OR ("${DXC_BUILD_ARCH}" STREQUAL "x64"))
-endif (CMAKE_GENERATOR MATCHES "Visual Studio 15 2017.*")
-
-set(DIASDK_LIBRARIES ${DIASDK_GUIDS_LIBRARY})
-set(DIASDK_INCLUDE_DIRS ${DIASDK_INCLUDE_DIR})
-
-include(FindPackageHandleStandardArgs)
-# handle the QUIETLY and REQUIRED arguments and set DIASDK_FOUND to TRUE
-# if all listed variables are TRUE
-find_package_handle_standard_args(DiaSDK  DEFAULT_MSG
-                                  DIASDK_LIBRARIES DIASDK_INCLUDE_DIR)
-
-mark_as_advanced(DIASDK_INCLUDE_DIRS DIASDK_LIBRARIES)
-
-if(DIASDK_LIBRARIES)
-        target_include_directories(${PROJECT_NAME}
-                PUBLIC
-                $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-                ${DIASDK_INCLUDE_DIRS}
-				${DIASDK_INCLUDE_DIRS}/../lib
-                )
-        target_link_libraries(${PROJECT_NAME}
-                PUBLIC
-                ${DIASDK_INCLUDE_DIRS}/../lib/amd64/diaguids.lib
-                )
-endif()
 add_compile_definitions(_CRT_SECURE_NO_WARNINGS) # silence warnings for mbstowcs
 
 target_link_libraries(
 	"${PROJECT_NAME}"
 	PRIVATE
-		Boost::headers
-		Boost::nowide
-		Boost::stacktrace_windbg
-		binary_io::binary_io
-		Bcrypt.lib
 		CommonLibF4::CommonLibF4
-		Dbghelp.lib
-		fmt::fmt
-        magic_enum::magic_enum
-		spdlog::spdlog
-		tomlplusplus::tomlplusplus
 		xbyak::xbyak
 		OpenVR::OpenVR
 )
@@ -233,8 +138,6 @@ target_link_libraries(
 target_compile_definitions(
 	"${PROJECT_NAME}"
 	PRIVATE
-		BOOST_STACKTRACE_LINK
-		BOOST_STACKTRACE_USE_WINDBG
 )
 
 target_compile_definitions(
