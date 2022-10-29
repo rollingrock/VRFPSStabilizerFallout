@@ -29,17 +29,8 @@
 #include <vector>
 
 #pragma warning(push)
-#include <boost/algorithm/searching/knuth_morris_pratt.hpp>
-#include <boost/container/flat_map.hpp>
-#include <boost/container/flat_set.hpp>
-#include <boost/container/small_vector.hpp>
-#include <boost/nowide/convert.hpp>
-#include <boost/stacktrace.hpp>
-#include <fmt/chrono.h>
-#include <mmio/mmio.hpp>
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/msvc_sink.h>
-#include <toml++/toml.h>
 #pragma warning(pop)
 
 namespace WinAPI
