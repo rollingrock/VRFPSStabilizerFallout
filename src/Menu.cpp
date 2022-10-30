@@ -26,7 +26,7 @@ namespace VRFpsStabilizer
 	}
 
 	bool isInMenu() {
-		return menus.empty();
+		return !menus.empty();
 	}
 
 

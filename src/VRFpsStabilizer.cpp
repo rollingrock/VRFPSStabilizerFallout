@@ -20,6 +20,10 @@ namespace VRFpsStabilizer
 	//dword_141ED391C = g_fLODFadeOutMultActors;
 
 	//RelocPtr<float> g_fLODFadeOutMultItems(0x1ED3918);
+	REL::Relocation<float> g_fLODFadeOutMultActors{ REL::ID(403308) };
+	REL::Relocation<float> g_fLODFadeOutMultItems{ REL::ID(1061501) };
+	REL::Relocation<float> g_fLODFadeOutMultObjects{ REL::ID(137393) };
+	REL::Relocation<float> g_fLODFadeOutMultSkyCell{ REL::ID(795799) };
 	//RelocPtr<float> g_fLODFadeOutMultActors(0x1ED391C);
 	//RelocPtr<float> g_fLODFadeOutMultObjects_1(0x1ED3910);
 	//RelocPtr<float> g_fLODFadeOutMultObjects_2(0x1ED3914);
@@ -28,25 +32,28 @@ namespace VRFpsStabilizer
 	//RelocPtr<float> g_fLODFadeOutMultObjects_5(0x1ED3930);
 
 	//RelocPtr<float> g_fShadowDistance_1(0x1ED6530);
+	REL::Relocation<float> g_fShadowDistance_1{ REL::ID(347939) };
 	//RelocPtr<float> g_fShadowDistance_2(0x36ED280);
 	//RelocPtr<float> g_fShadowDistanceExterior_3(0x36ED280);
 
 	//RelocAddr<_SetShadowDistance_14134B520> SetShadowDistance_14134B520(0x134B520);
 
 	//RelocPtr<int> g_iShadowMapResolution_1(0x1ED6308);
+	REL::Relocation<int> g_iShadowMapResolution_1{ REL::Offset(0x39266f0) };
 	//RelocPtr<int> g_iShadowMapResolution_2(0x36ED2A8);
 
 	//RelocPtr<bool> g_isInterior(0x34230C4);
 
-	//RelocPtr<int> g_iMinGrassSize(0x1E702E0);
+	REL::Relocation<int> g_iMinGrassSize{ REL::ID(916468) };
 
-	//RelocPtr<float> g_fGrassStartFadeDistance(0x1E70298);
-	//RelocPtr<float> g_fGrassFadeRange(0x1E702B0);
-	//RelocPtr<float> g_fGrassMaxStartFadeDistance(0x1E70280);
+	REL::Relocation<float> g_fGrassStartFadeDistance{ REL::ID(1182574) };
+	REL::Relocation<float> g_fGrassFadeRange{ REL::ID(524441) };
+	REL::Relocation<float> g_fGrassMaxStartFadeDistance{ REL::Offset(0x36ff3d8) };
 
 	//RelocPtr<unsigned int> g_uiMaxSkinnedTreesToRender(0x1EA7540);
 
 	//RelocPtr<bool> g_bEnableTreeAnimations(0x1EA74E0);
+	REL::Relocation<bool> g_bEnableTreeAnimations{ REL::ID(426092) };
 
 	//RelocPtr<bool> g_bTreesReceiveShadows(0x1EA7570);
 
@@ -67,7 +74,7 @@ namespace VRFpsStabilizer
 
 	//RelocPtr<UInt64> g_qword_142FEC210(0x2FEC210);
 
-	//RelocPtr<UInt64> g_GrassManager(0x1F85130);
+	REL::Relocation<std::uintptr_t> g_GrassManager{ REL::ID(347939) };
 
 	//RelocPtr<UInt64> g_qword_142FEB6F8(0x2FEB6F8);
 
@@ -76,8 +83,6 @@ namespace VRFpsStabilizer
 	//RelocAddr<_ctor_140155A80> ctor_140155A80(0x155A80);
 
 	//RelocAddr<_SetGrassEnabled_1401B69B0> SetGrassEnabled_1401B69B0(0x1B69B0);
-
-	//Sky** g_SkyPtr = nullptr;
 
 	//ini settings
 	int enableLog = 1;
@@ -201,7 +206,7 @@ namespace VRFpsStabilizer
 			sprintf_s(cmdBuffer, cmdBufferSize, "%s", dataLoadedCommands[i].c_str());
 	//		CSkyrimConsole::RunCommand(cmdBuffer);
 			RE::Console::ExecuteCommand(cmdBuffer);
-			logger::info("Executed command: %s", dataLoadedCommands[i].c_str());
+			logger::info("Executed command: {}", dataLoadedCommands[i].c_str());
 		}
 	}
 
@@ -233,7 +238,7 @@ namespace VRFpsStabilizer
 				sprintf_s(cmdBuffer, cmdBufferSize, "%s", afterLoadGameCommands[i].c_str());
 	//			CSkyrimConsole::RunCommand(cmdBuffer);
 				RE::Console::ExecuteCommand(cmdBuffer);
-				logger::info("Executed command after load game: %s", afterLoadGameCommands[i].c_str());
+				logger::info("Executed command after load game: {}", afterLoadGameCommands[i].c_str());
 			}
 			break;
 		}
@@ -245,7 +250,7 @@ namespace VRFpsStabilizer
 			sprintf_s(cmdBuffer, cmdBufferSize, "%s", postLoadGameCommands[i].c_str());
 	//		CSkyrimConsole::RunCommand(cmdBuffer);
 			RE::Console::ExecuteCommand(cmdBuffer);
-			logger::info("Executed command post load game: %s", postLoadGameCommands[i].c_str());
+			logger::info("Executed command post load game: {}", postLoadGameCommands[i].c_str());
 		}
 
 		std::thread t3(RunAfterLoadGameCommands);
@@ -258,7 +263,7 @@ namespace VRFpsStabilizer
 			sprintf_s(cmdBuffer, cmdBufferSize, "%s", newGameCommands[i].c_str());
 	//		CSkyrimConsole::RunCommand(cmdBuffer);
 			RE::Console::ExecuteCommand(cmdBuffer);
-			logger::info("Executed command new game: %s", newGameCommands[i].c_str());
+			logger::info("Executed command new game: {}", newGameCommands[i].c_str());
 		}
 	}
 
@@ -337,7 +342,7 @@ namespace VRFpsStabilizer
 	{
 	//	SafeWriteJump(addressStart.GetUIntPtr(), addressEnd.GetUIntPtr());
 
-			std::string filepath = "Data\\SKSE\\Plugins\\VRFpsStabilizer.ini";
+			std::string filepath = "Data\\F4SE\\Plugins\\VRFpsStabilizer.ini";
 
 			std::ifstream file(filepath);
 
@@ -347,6 +352,7 @@ namespace VRFpsStabilizer
 			}
 
 			if (file.is_open()) {
+				logger::info("opening config ini file");
 				std::string line;
 				std::string currentSetting;
 				while (std::getline(file, line)) {
@@ -503,24 +509,24 @@ namespace VRFpsStabilizer
 				}
 				ParseConditionalCommands();
 
-				if (AdjustDynamicResolution && maxLevel > DynamicResolutionStartLevel) {
-					for (int i = 0; i <= maxLevel; i++) {
-						ConfigSetting cs;
-						cs.enb = false;
-						cs.toggle = false;
-						cs.console = false;
-						cs.variableName = "fLowestDynamicWidthRatio:Display";
-						if (i < DynamicResolutionStartLevel) {
-							cs.variableValue = 1.0;
-						} else {
-							cs.variableValue = MaxDynamicResolutionRatio - ((MaxDynamicResolutionRatio - MinDynamicResolutionRatio) * ((float)(i - DynamicResolutionStartLevel) / (maxLevel - DynamicResolutionStartLevel)));
-						}
-						LevelMap[i].emplace_back(cs);
+				//if (AdjustDynamicResolution && maxLevel > DynamicResolutionStartLevel) {
+				//	for (int i = 0; i <= maxLevel; i++) {
+				//		ConfigSetting cs;
+				//		cs.enb = false;
+				//		cs.toggle = false;
+				//		cs.console = false;
+				//		cs.variableName = "fLowestDynamicWidthRatio:Display";
+				//		if (i < DynamicResolutionStartLevel) {
+				//			cs.variableValue = 1.0;
+				//		} else {
+				//			cs.variableValue = MaxDynamicResolutionRatio - ((MaxDynamicResolutionRatio - MinDynamicResolutionRatio) * ((float)(i - DynamicResolutionStartLevel) / (maxLevel - DynamicResolutionStartLevel)));
+				//		}
+				//		LevelMap[i].emplace_back(cs);
 
-						cs.variableName = "fLowestDynamicHeightRatio:Display";
-						LevelMap[i].emplace_back(cs);
-					}
-				}
+				//		cs.variableName = "fLowestDynamicHeightRatio:Display";
+				//		LevelMap[i].emplace_back(cs);
+				//	}
+				//}
 			}
 		
 	}
@@ -528,7 +534,7 @@ namespace VRFpsStabilizer
 	void loadLocationConfig()
 	{
 
-			std::string filepath = "Data\\SKSE\\Plugins\\VRFpsStabilizerLocation.ini";
+			std::string filepath = "Data\\F4SE\\Plugins\\VRFpsStabilizerLocation.ini";
 
 			std::ifstream file(filepath);
 
@@ -906,11 +912,16 @@ namespace VRFpsStabilizer
 						}
 					}
 					bool isGrassEnabled = true;
-					//__int64 v0_r8 = *(__int64*)((std::uint64_t)(*g_GrassManager) + 104);
-					//if (v0_r8) {
-					//	isGrassEnabled = ((*(BYTE*)(v0_r8 + 268)) & 1) == 0;
-					//	//LOG_ERR("Grass is currently %s.", isGrassEnabled ? "enabled" : "disabled");
-					//}
+					std::uintptr_t* gm = (std::uintptr_t*)g_GrassManager.address();
+					if (*gm) {
+						isGrassEnabled = (((*gm)+0x80) & 1) == 0;
+						if (isGrassEnabled) {
+							logger::info("Grass is currently enabled");
+						} else {
+							logger::info("Grass is currently disabled");
+						
+						}
+					}
 
 					if (isGrassEnabled && !newGrassState) {
 				//		CSkyrimConsole::RunCommand("tg");
@@ -1151,25 +1162,25 @@ namespace VRFpsStabilizer
 				logger::critical("Cannot find Level 0 values...");
 			}
 
-		//	ToggleSwitch(0);
+			ToggleSwitch(0);
 
-			if (AdjustDynamicResolution) {
-				//SetEnableAutoDynamicResolution(true);
-				SetRatioDecreasePerSeconds(0.07f);
-				SetRatioIncreasePerSeconds(0.07f);
-				SetLowestDynamicHeightRatio(MaxDynamicResolutionRatio);
-				SetLowestDynamicWidthRatio(MaxDynamicResolutionRatio);
-				//SetResolutionChangeInterval(0.01);
-				//SetDecreaseDRMilliseconds(10);
-				//SetIncreaseDRMilliseconds(10);
-				//SetDRClampOffset(4.0f);
-				//SetDRClampOffsetNeo(4.0f);
-				currentFrameTimeDR = MaxTargetFrameTime;
-				currentDRRatio = MaxDynamicResolutionRatio;
-				logger::info("Setting dynamic resolution settings to their max.");
-			} else {
-				//SetEnableAutoDynamicResolution(false);
-			}
+			//if (AdjustDynamicResolution) {
+			//	//SetEnableAutoDynamicResolution(true);
+			//	SetRatioDecreasePerSeconds(0.07f);
+			//	SetRatioIncreasePerSeconds(0.07f);
+			//	SetLowestDynamicHeightRatio(MaxDynamicResolutionRatio);
+			//	SetLowestDynamicWidthRatio(MaxDynamicResolutionRatio);
+			//	//SetResolutionChangeInterval(0.01);
+			//	//SetDecreaseDRMilliseconds(10);
+			//	//SetIncreaseDRMilliseconds(10);
+			//	//SetDRClampOffset(4.0f);
+			//	//SetDRClampOffsetNeo(4.0f);
+			//	currentFrameTimeDR = MaxTargetFrameTime;
+			//	currentDRRatio = MaxDynamicResolutionRatio;
+			//	logger::info("Setting dynamic resolution settings to their max.");
+			//} else {
+			//	//SetEnableAutoDynamicResolution(false);
+			//}
 
 			std::thread t1(CheckFrameTime);
 			t1.detach();
@@ -1239,6 +1250,7 @@ namespace VRFpsStabilizer
 	void SetShadowDistance(float shadowDist)
 	{
 //		SetShadowDistance_14134B520(shadowDist);
+		g_fShadowDistance_1 = shadowDist;
 	}
 
 	void SetInteriorShadowDistance(float shadowDist)
@@ -1251,22 +1263,22 @@ namespace VRFpsStabilizer
 
 	void SetShadowMapResolution(int resolution)
 	{
-		//(*g_iShadowMapResolution_1) = resolution;
+		g_iShadowMapResolution_1 = resolution;
 		//(*g_iShadowMapResolution_2) = resolution;
 	}
 
 	void SetiMinGrassSize(float iminGrassSize)
 	{
-		//if ((*g_iMinGrassSize)) {
-		//	(*g_iMinGrassSize) = (int)iminGrassSize;
-			//CSkyrimConsole::RunCommand("tg");
-			//CSkyrimConsole::RunCommand("tg");
-	//	}
+		if (g_iMinGrassSize.get()) {
+			g_iMinGrassSize = (int)iminGrassSize;
+			RE::Console::ExecuteCommand("tg");
+			RE::Console::ExecuteCommand("tg");
+		}
 	}
 
 	void SetEnableTreeAnimations(bool enable)
 	{
-		//*g_bEnableTreeAnimations = enable;
+		g_bEnableTreeAnimations = enable;
 		//*(BYTE*)(g_qword_142FEC210 + 2) = enable;
 	}
 
@@ -1335,34 +1347,29 @@ namespace VRFpsStabilizer
 	{
 		if (strcmp(variableName.c_str(), "fShadowDistance:Display") == 0) {
 			SetShadowDistance(variableValue);
-			logger::info("New setting (%s): %g", variableName.c_str(), variableValue);
+			logger::info("New setting {0}: {1}", variableName.c_str(), variableValue);
 		} else if (strcmp(variableName.c_str(), "fInteriorShadowDistance:Display") == 0) {
-			SetInteriorShadowDistance(variableValue);
-			logger::info("New setting (%s): %g", variableName.c_str(), variableValue);
+			//SetInteriorShadowDistance(variableValue);
+			//logger::info("New setting (%s): %g", variableName.c_str(), variableValue);
 		} else if (strcmp(variableName.c_str(), "iMinGrassSize:Grass") == 0) {
 			SetiMinGrassSize(variableValue);
-			logger::info("New setting (%s): %g", variableName.c_str(), variableValue);
+			logger::info("New setting {0}: {1}", variableName.c_str(), variableValue);
 		} else if (strcmp(variableName.c_str(), "bEnableTreeAnimations:Trees") == 0) {
 			SetEnableTreeAnimations(variableValue);
-			logger::info("New setting (%s): %g", variableName.c_str(), variableValue);
+			logger::info("New setting {0}: {1}", variableName.c_str(), variableValue);
 		} else if (strcmp(variableName.c_str(), "bTreesReceiveShadows:Display") == 0) {
-			SetTreesReceiveShadows(variableValue);
-			logger::info("New setting (%s): %g", variableName.c_str(), variableValue);
+		//	SetTreesReceiveShadows(variableValue);
 		} else if (strcmp(variableName.c_str(), "uiMaxSkinnedTreesToRender:Trees") == 0) {
-			SetMaxSkinnedTrees(variableValue);
-			logger::info("New setting (%s): %g", variableName.c_str(), variableValue);
+	//		SetMaxSkinnedTrees(variableValue);
 		} else if (strcmp(variableName.c_str(), "iShadowMapResolution:Display") == 0) {
 			SetShadowMapResolution(variableValue);
-			logger::info("New setting (%s): %g", variableName.c_str(), variableValue);
+			logger::info("New setting {0}: {1}", variableName.c_str(), variableValue);
 		} else if (strcmp(variableName.c_str(), "bEnableAutoDynamicResolution:Display") == 0) {
-			SetEnableAutoDynamicResolution(variableValue);
-			logger::info("New setting (%s): %g", variableName.c_str(), variableValue);
+	//		SetEnableAutoDynamicResolution(variableValue);
 		} else if (strcmp(variableName.c_str(), "fLowestDynamicWidthRatio:Display") == 0) {
-			SetLowestDynamicWidthRatio(variableValue);
-			logger::info("New setting (%s): %g", variableName.c_str(), variableValue);
+	//		SetLowestDynamicWidthRatio(variableValue);
 		} else if (strcmp(variableName.c_str(), "fLowestDynamicHeightRatio:Display") == 0) {
-			SetLowestDynamicHeightRatio(variableValue);
-			logger::info("New setting (%s): %g", variableName.c_str(), variableValue);
+	//		SetLowestDynamicHeightRatio(variableValue);
 		} else {
 			RE::Setting* csetting = GetINISetting(variableName.c_str());
 			if (csetting) {
@@ -1372,12 +1379,12 @@ namespace VRFpsStabilizer
 
 				out = csetting->GetFloat();
 				if (csetting) {
-					logger::info("New setting (%s): %g", variableName.c_str(), out);
+					logger::info("New setting {0}: {1}", variableName.c_str(), out);
 				} else {
-					logger::info("cannot set setting (%s)", variableName.c_str());
+					logger::info("cannot set setting {}", variableName.c_str());
 				}
 			} else {
-				logger::info("setting not found (%s)", variableName.c_str());
+				logger::info("setting not found {}", variableName.c_str());
 			}
 		}
 	}
@@ -1409,7 +1416,7 @@ namespace VRFpsStabilizer
 			ToggleSwitch(level);
 
 			currentLevelFrameTime = currentFrameTime;
-			logger::info("Switching to level %d - Angle:%g", level, lastHeadingAngle);
+			logger::info("Switching to level {0} - Angle:{1}", level, lastHeadingAngle);
 		}
 	}
 
@@ -1425,7 +1432,7 @@ namespace VRFpsStabilizer
 		SetLowestDynamicHeightRatio(newRatio);
 
 		currentFrameTimeDR = frameTime;
-		logger::info("Setting DR to %g - Angle:%g", newRatio, lastHeadingAngle);
+		logger::info("Setting DR to {0} - Angle:{1}", newRatio, lastHeadingAngle);
 	}
 
 	void CheckFrameTime()
@@ -1498,19 +1505,19 @@ namespace VRFpsStabilizer
 									if (AdjustActorLODFade) {
 										if (CurrentActorLODFade > MinfLODFadeOutMultActors + modifierActors) {
 											CurrentActorLODFade--;
-									//		(*g_fLODFadeOutMultActors) = (float)CurrentActorLODFade;
-											logger::info("Late Start. Setting fLODFadeOutMultActors to %d", CurrentActorLODFade);
+											g_fLODFadeOutMultActors = (float)CurrentActorLODFade;
+											logger::info("Late Start. Setting fLODFadeOutMultActors to {}", CurrentActorLODFade);
 										}
 									}
 									if (AdjustObjectLODFade) {
 										if (CurrentObjectLODFade > MinfLODFadeOutMultObjects + modifierObjects) {
 											CurrentObjectLODFade--;
-											//(*g_fLODFadeOutMultObjects_1) = (float)CurrentObjectLODFade;
+											g_fLODFadeOutMultObjects = (float)CurrentObjectLODFade;
 											//(*g_fLODFadeOutMultObjects_2) = (float)CurrentObjectLODFade;
 											//(*g_fLODFadeOutMultObjects_3) = (float)CurrentObjectLODFade;
 											//(*g_fLODFadeOutMultObjects_4) = (float)CurrentObjectLODFade;
 											//(*g_fLODFadeOutMultObjects_5) = (float)CurrentObjectLODFade;
-											logger::info("Late Start. Setting fLODFadeOutMultObjects to %d", CurrentObjectLODFade);
+											logger::info("Late Start. Setting fLODFadeOutMultObjects to {}", CurrentObjectLODFade);
 										}
 									}
 									lastCpuLateStartHeadingAngle = GetPlayerHeadingAngle();
@@ -1525,19 +1532,19 @@ namespace VRFpsStabilizer
 									if (AdjustActorLODFade) {
 										if (CurrentActorLODFade < MaxfLODFadeOutMultActors + modifierActors) {
 											CurrentActorLODFade++;
-									//		(*g_fLODFadeOutMultActors) = (float)CurrentActorLODFade;
-											logger::info("No Late Start. Setting fLODFadeOutMultActors to %d", CurrentActorLODFade);
+											g_fLODFadeOutMultActors = (float)CurrentActorLODFade;
+											logger::info("No Late Start. Setting fLODFadeOutMultActors to {}", CurrentActorLODFade);
 										}
 									}
 									if (AdjustObjectLODFade) {
 										if (CurrentObjectLODFade < MaxfLODFadeOutMultObjects + modifierObjects) {
 											CurrentObjectLODFade++;
-											//(*g_fLODFadeOutMultObjects_1) = (float)CurrentObjectLODFade;
+											g_fLODFadeOutMultObjects = (float)CurrentObjectLODFade;
 											//(*g_fLODFadeOutMultObjects_2) = (float)CurrentObjectLODFade;
 											//(*g_fLODFadeOutMultObjects_3) = (float)CurrentObjectLODFade;
 											//(*g_fLODFadeOutMultObjects_4) = (float)CurrentObjectLODFade;
 											//(*g_fLODFadeOutMultObjects_5) = (float)CurrentObjectLODFade;
-											logger::info("No Late Start. Setting fLODFadeOutMultObjects to %d", CurrentObjectLODFade);
+											logger::info("No Late Start. Setting fLODFadeOutMultObjects to {}", CurrentObjectLODFade);
 										}
 									}
 								}
