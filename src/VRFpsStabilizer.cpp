@@ -32,7 +32,7 @@ namespace VRFpsStabilizer
 	//RelocPtr<float> g_fLODFadeOutMultObjects_5(0x1ED3930);
 
 	//RelocPtr<float> g_fShadowDistance_1(0x1ED6530);
-	REL::Relocation<float> g_fShadowDistance_1{ REL::ID(347939) };
+	REL::Relocation<float> g_fShadowDistance_1{ REL::Offset(0x39254a8) };
 	//RelocPtr<float> g_fShadowDistance_2(0x36ED280);
 	//RelocPtr<float> g_fShadowDistanceExterior_3(0x36ED280);
 
@@ -1219,6 +1219,22 @@ namespace VRFpsStabilizer
 		return pos;
 	}
 
+	void toEulerAngles(RE::NiMatrix3 data, float* heading, float* attitude, float* bank) {
+		if (data.entry[1].pt[0] > 0.998) {  // singularity at north pole
+			*heading = atan2(data.entry[0].pt[2], data.entry[2].pt[2]);
+			*attitude = (float)(MATH_PI / 2);
+			*bank = 0;
+		} else if (data.entry[1].pt[0] < -0.998) {  // singularity at south pole
+			*heading = atan2(data.entry[0].pt[2], data.entry[2].pt[2]);
+			*attitude = (float)(-MATH_PI / 2);
+			*bank = 0;
+		} else {
+			*heading = atan2(-data.entry[2].pt[0], data.entry[0].pt[0]);
+			*bank = atan2(-data.entry[1].pt[2], data.entry[1].pt[1]);
+			*attitude = asin(data.entry[1].pt[0]);
+		}
+	}
+
 	float GetPlayerHeadingAngle()
 	{
 		auto g_thePlayer = RE::PlayerCharacter::GetSingleton();
@@ -1228,12 +1244,13 @@ namespace VRFpsStabilizer
 			float attitude = 0.0;
 			float bank = 0.0;
 			RE::NiMatrix3 playerrotation = g_thePlayer->loadedData->data3D->world.rotate;
-			playerrotation.ToEulerAnglesXYZ(&heading, &attitude, &bank);
+		//	playerrotation.ToEulerAnglesXYZ(&heading, &attitude, &bank);
+			toEulerAngles(playerrotation, &heading, &attitude, &bank);
 
 			float playerHeading = heading * (180 / MATH_PI);
 
 			float playerAttitude = attitude * (180 / MATH_PI);
-
+			
 			if (playerHeading == -180) {
 				headingAngle = 180 - playerAttitude;
 			} else {
@@ -1345,7 +1362,8 @@ namespace VRFpsStabilizer
 
 	void RunIniSetting(std::string variableName, double variableValue)
 	{
-		if (strcmp(variableName.c_str(), "fShadowDistance:Display") == 0) {
+		//if (strcmp(variableName.c_str(), "fShadowDistance:Display") == 0) {
+		if (false) {
 			SetShadowDistance(variableValue);
 			logger::info("New setting {0}: {1}", variableName.c_str(), variableValue);
 		} else if (strcmp(variableName.c_str(), "fInteriorShadowDistance:Display") == 0) {
@@ -1373,13 +1391,21 @@ namespace VRFpsStabilizer
 		} else {
 			RE::Setting* csetting = GetINISetting(variableName.c_str());
 			if (csetting) {
-				csetting->SetFloat(variableValue);
+				if (csetting->GetType() == RE::Setting::SETTING_TYPE::kFloat) {
+					csetting->SetFloat(variableValue);
+				} else {
+					csetting->SetInt(variableValue);
+				} 
 
 				double out = -1;
 
-				out = csetting->GetFloat();
+				if (csetting->GetType() == RE::Setting::SETTING_TYPE::kFloat) {
+					out = csetting->GetFloat();
+				} else {
+					out = csetting->GetInt();
+				}
 				if (csetting) {
-					logger::info("New setting {0}: {1}", variableName.c_str(), out);
+					logger::info("New setting {0}: {1:03.2f}", variableName.c_str(), out);
 				} else {
 					logger::info("cannot set setting {}", variableName.c_str());
 				}
@@ -1416,7 +1442,7 @@ namespace VRFpsStabilizer
 			ToggleSwitch(level);
 
 			currentLevelFrameTime = currentFrameTime;
-			logger::info("Switching to level {0} - Angle:{1}", level, lastHeadingAngle);
+			logger::info("Switching to level {0} - Angle:{1:03.2f}", level, lastHeadingAngle);
 		}
 	}
 
@@ -1432,7 +1458,7 @@ namespace VRFpsStabilizer
 		SetLowestDynamicHeightRatio(newRatio);
 
 		currentFrameTimeDR = frameTime;
-		logger::info("Setting DR to {0} - Angle:{1}", newRatio, lastHeadingAngle);
+		logger::info("Setting DR to {0} - Angle:{1:03.2f}", newRatio, lastHeadingAngle);
 	}
 
 	void CheckFrameTime()
@@ -1615,7 +1641,7 @@ namespace VRFpsStabilizer
 								} else {
 									currentHighPerfFrameCount = 0;
 									currentLowPerfFrameCount = 0;
-									//_MESSAGE("Last direction: %s - waiting to go down: %d", lastDirectionPositive ? "Positive" : "Negative", waitingToGoDown);
+//									logger::info("Last direction: {0} - waiting to go down: {1} : currentHeading {2:03.2f} : lastheading {3:03.2f}", lastDirectionPositive ? "Positive" : "Negative", waitingToGoDown, GetPlayerHeadingAngle(), lastHeadingAngle);
 
 									if (currentLevel > 0) {
 										if (!lastDirectionPositive || (waitingToGoDown >= waitTurnsToSwitchBackDown && GetAngleDifference(GetPlayerHeadingAngle(), lastHeadingAngle) > static_cast<float>(angleToSwitchBackUp))) {
@@ -1633,6 +1659,7 @@ namespace VRFpsStabilizer
 								currentLowPerfFrameCount = 0;
 								currentHighPerfFrameCount = 0;
 								//_MESSAGE("Last direction: %s - waiting to go up: %d", lastDirectionPositive ? "Positive" : "Negative", waitingToGoUp);
+						//		logger::info("Last direction: {} - waiting to go up: {}", lastDirectionPositive ? "Positive" : "Negative", waitingToGoUp);
 
 								if (currentLevel < maxLevel) {
 									if (lastDirectionPositive || (waitingToGoUp >= waitTurnsToSwitchBackUp)) {
