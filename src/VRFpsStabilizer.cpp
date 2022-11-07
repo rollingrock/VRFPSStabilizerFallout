@@ -742,7 +742,26 @@ namespace VRFpsStabilizer
 					} else if (LevelMap[0][i].enb == false && LevelMap[0][i].toggle == false) {
 						RE::Setting* csetting = GetINISetting(LevelMap[0][i].variableName.c_str());
 						if (csetting) {
-							csetting->SetFloat(LevelMap[0][i].variableValue);
+							if (csetting->GetType() == RE::Setting::SETTING_TYPE::kFloat) {
+								csetting->SetFloat(LevelMap[0][i].variableValue);
+							} else {
+								csetting->SetInt(LevelMap[0][i].variableValue);
+							}
+
+							double out = -1;
+
+							if (csetting->GetType() == RE::Setting::SETTING_TYPE::kFloat) {
+								out = csetting->GetFloat();
+							} else {
+								out = csetting->GetInt();
+							}
+							if (csetting) {
+								logger::info("New setting {0}: {1:03.2f}", LevelMap[0][i].variableName.c_str(), out);
+							} else {
+								logger::info("cannot set setting {}", LevelMap[0][i].variableName.c_str());
+							}
+						} else {
+							logger::info("setting not found {}", LevelMap[0][i].variableName.c_str());
 						}
 					}
 				}
@@ -1363,32 +1382,32 @@ namespace VRFpsStabilizer
 	void RunIniSetting(std::string variableName, double variableValue)
 	{
 		//if (strcmp(variableName.c_str(), "fShadowDistance:Display") == 0) {
-		if (false) {
-			SetShadowDistance(variableValue);
-			logger::info("New setting {0}: {1}", variableName.c_str(), variableValue);
-		} else if (strcmp(variableName.c_str(), "fInteriorShadowDistance:Display") == 0) {
-			//SetInteriorShadowDistance(variableValue);
-			//logger::info("New setting (%s): %g", variableName.c_str(), variableValue);
-		} else if (strcmp(variableName.c_str(), "iMinGrassSize:Grass") == 0) {
-			SetiMinGrassSize(variableValue);
-			logger::info("New setting {0}: {1}", variableName.c_str(), variableValue);
-		} else if (strcmp(variableName.c_str(), "bEnableTreeAnimations:Trees") == 0) {
-			SetEnableTreeAnimations(variableValue);
-			logger::info("New setting {0}: {1}", variableName.c_str(), variableValue);
-		} else if (strcmp(variableName.c_str(), "bTreesReceiveShadows:Display") == 0) {
-		//	SetTreesReceiveShadows(variableValue);
-		} else if (strcmp(variableName.c_str(), "uiMaxSkinnedTreesToRender:Trees") == 0) {
-	//		SetMaxSkinnedTrees(variableValue);
-		} else if (strcmp(variableName.c_str(), "iShadowMapResolution:Display") == 0) {
-			SetShadowMapResolution(variableValue);
-			logger::info("New setting {0}: {1}", variableName.c_str(), variableValue);
-		} else if (strcmp(variableName.c_str(), "bEnableAutoDynamicResolution:Display") == 0) {
-	//		SetEnableAutoDynamicResolution(variableValue);
-		} else if (strcmp(variableName.c_str(), "fLowestDynamicWidthRatio:Display") == 0) {
-	//		SetLowestDynamicWidthRatio(variableValue);
-		} else if (strcmp(variableName.c_str(), "fLowestDynamicHeightRatio:Display") == 0) {
-	//		SetLowestDynamicHeightRatio(variableValue);
-		} else {
+	//	if (false) {
+	//		SetShadowDistance(variableValue);
+	//		logger::info("New setting {0}: {1}", variableName.c_str(), variableValue);
+	//	} else if (strcmp(variableName.c_str(), "fInteriorShadowDistance:Display") == 0) {
+	//		//SetInteriorShadowDistance(variableValue);
+	//		//logger::info("New setting (%s): %g", variableName.c_str(), variableValue);
+	//	} else if (strcmp(variableName.c_str(), "iMinGrassSize:Grass") == 0) {
+	//		SetiMinGrassSize(variableValue);
+	//		logger::info("New setting {0}: {1}", variableName.c_str(), variableValue);
+	//	} else if (strcmp(variableName.c_str(), "bEnableTreeAnimations:Trees") == 0) {
+	//		SetEnableTreeAnimations(variableValue);
+	//		logger::info("New setting {0}: {1}", variableName.c_str(), variableValue);
+	//	} else if (strcmp(variableName.c_str(), "bTreesReceiveShadows:Display") == 0) {
+	//	//	SetTreesReceiveShadows(variableValue);
+	//	} else if (strcmp(variableName.c_str(), "uiMaxSkinnedTreesToRender:Trees") == 0) {
+	////		SetMaxSkinnedTrees(variableValue);
+	//	//} else if (strcmp(variableName.c_str(), "iShadowMapResolution:Display") == 0) {
+	//	//	SetShadowMapResolution(variableValue);
+	//		//logger::info("New setting {0}: {1}", variableName.c_str(), variableValue);
+	//	} else if (strcmp(variableName.c_str(), "bEnableAutoDynamicResolution:Display") == 0) {
+	////		SetEnableAutoDynamicResolution(variableValue);
+	//	} else if (strcmp(variableName.c_str(), "fLowestDynamicWidthRatio:Display") == 0) {
+	////		SetLowestDynamicWidthRatio(variableValue);
+	//	} else if (strcmp(variableName.c_str(), "fLowestDynamicHeightRatio:Display") == 0) {
+	////		SetLowestDynamicHeightRatio(variableValue);
+	//	} else {
 			RE::Setting* csetting = GetINISetting(variableName.c_str());
 			if (csetting) {
 				if (csetting->GetType() == RE::Setting::SETTING_TYPE::kFloat) {
@@ -1412,7 +1431,7 @@ namespace VRFpsStabilizer
 			} else {
 				logger::info("setting not found {}", variableName.c_str());
 			}
-		}
+	//	}
 	}
 
 	void SwitchToLevel(int level, double currentFrameTime)
